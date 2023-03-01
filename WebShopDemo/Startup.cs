@@ -43,6 +43,7 @@ namespace WebShopDemo
                 Configuration.GetConnectionString("DefaultConnection")));
             services.AddTransient<ICategoryService, CategoryService>();
             services.AddTransient<IBrandService, BrandService>();
+            services.AddTransient<IProductService, ProductService>();
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddDefaultIdentity<ApplicationUser>()
                 .AddRoles<IdentityRole>()
