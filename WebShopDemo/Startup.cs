@@ -62,8 +62,7 @@ namespace WebShopDemo
                 option.Password.RequireUppercase = false;
                 option.Password.RequiredUniqueChars = 0;
 
-            }
-            );
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

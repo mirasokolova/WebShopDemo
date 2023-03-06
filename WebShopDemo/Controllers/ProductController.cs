@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebShopDemo.Abstraction;
+using WebShopDemo.Domain;
 using WebShopDemo.Models.Brand;
 using WebShopDemo.Models.Category;
 using WebShopDemo.Models.Product;
@@ -27,18 +28,41 @@ namespace WebShopDemo.Controllers
         {
             List<ProductIndexVM> products = _productService.GetProducts(searchStringCategoryName, searchStringBrandName).Select(product => new ProductIndexVM
             {
-                Id =product.Id,
-                ProductName=product.ProductName,
-                BrandId=product.BrandId,
-                
-            }
-            return View();
+                Id = product.Id,
+                ProductName = product.ProductName,
+                BrandId = product.BrandId,
+                CategoryId = product.CategoryId,
+                Picture = product.Picture,
+                Quantity = product.Quantity,
+                Price = product.Price,
+                Discount = product.Discount
+
+            }).ToList();
+            return this.View(products);
         }
 
         // GET: ProductController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            Product item = _productService.GetProductById(id);
+            if (item == null)
+            {
+                return NotFound();
+            }
+            ProductDetailsVM product = new ProductDetailsVM()
+            {
+                Id = item.Id,
+                ProductName = item.ProductName,
+                BrandId = item.BrandId,
+                CategoryId = item.CategoryId,
+                Picture = item.Picture,
+                Quantity = item.Quantity,
+                Price = item.Price,
+                Discount = item.Discount
+            };
+  
+            
+            return View(product);
         }
 
         // GET: ProductController/Create
@@ -84,27 +108,63 @@ namespace WebShopDemo.Controllers
         // GET: ProductController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            Product product = _productService.GetProductById(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            ProductEditVM updatedProduct = new ProductEditVM()
+            {
+                Id = product.Id,
+                ProductName = product.ProductName,
+                BrandId = product.BrandId,
+                CategoryId = product.CategoryId,
+                Picture = product.Picture,
+                Quantity = product.Quantity,
+                Price = product.Price,
+                Discount = product.Discount
+            };
+            updatedProduct.Brands = _brandService.GetBrands()
+                .Select(b => new BrandPairVM()
+                {
+                    Id = b.Id,
+                    Name = b.BrandName
+
+                }).ToList();
+            updatedProduct.Categories = _categoryService.GetCategories()
+                .Select(b => new CategoryPairVM()
+                {
+                    Id = b.Id,
+                    Name = b.CategoryName
+
+                }).ToList();
+            return View(updatedProduct);
         }
 
         // POST: ProductController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, ProductEditVM product)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                var updated = _productService.Update(id,product.ProductName, product.BrandId, product.CategoryId,
+                    product.Picture, product.Quantity,
+                    product.Price, product.Discount);
+
+                if (updated)
+                {
+                    return this.RedirectToAction("Index");
+                }
+
             }
-            catch
-            {
-                return View();
-            }
+            return View(product);
         }
 
         // GET: ProductController/Delete/5
         public ActionResult Delete(int id)
         {
+
             return View();
         }
 

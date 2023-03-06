@@ -18,5 +18,6 @@ namespace WebShopDemo.Abstraction
         bool RemoveById(int dogproductId);
 
        List<Product> GetProducts(string searchStringCategoryName, string searchStringBrandName);
+        object Update(string productName, int brandId, int categoryId, string picture, int quantity, decimal price, decimal discount);
     }
 }
