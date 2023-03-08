@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ using WebShopDemo.Models.Product;
 
 namespace WebShopDemo.Controllers
 {
+    [Authorize(Roles="Administrator")]
     public class ProductController : Controller
     {
         private readonly IProductService _productService;
@@ -24,6 +26,7 @@ namespace WebShopDemo.Controllers
             this._categoryService = categoryService;
             this._productService = productService;
         }
+        [AllowAnonymous]
         public ActionResult Index(string searchStringCategoryName, string searchStringBrandName)
         {
             List<ProductIndexVM> products = _productService.GetProducts(searchStringCategoryName, searchStringBrandName).Select(product => new ProductIndexVM
@@ -40,7 +43,7 @@ namespace WebShopDemo.Controllers
             }).ToList();
             return this.View(products);
         }
-
+        [AllowAnonymous]
         // GET: ProductController/Details/5
         public ActionResult Details(int id)
         {
@@ -164,8 +167,23 @@ namespace WebShopDemo.Controllers
         // GET: ProductController/Delete/5
         public ActionResult Delete(int id)
         {
-
-            return View();
+            Product item = _productService.GetProductById(id);
+            if (item == null)
+            {
+                return NotFound();
+            }
+            ProductDeleteVM product = new ProductDeleteVM()
+            {
+                Id = item.Id,
+                ProductName = item.ProductName,
+                BrandId = item.BrandId,
+                CategoryId = item.CategoryId,
+                Picture = item.Picture,
+                Quantity = item.Quantity,
+                Price = item.Price,
+                Discount = item.Discount
+            };
+            return View(product);
         }
 
         // POST: ProductController/Delete/5
@@ -173,14 +191,19 @@ namespace WebShopDemo.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
         {
-            try
+            var deleted = _productService.RemoveById(id);
+            if (deleted)
             {
-                return RedirectToAction(nameof(Index));
+                return this.RedirectToAction("Success");
             }
-            catch
+            else
             {
                 return View();
             }
+        }
+        public IActionResult Success()
+        {
+            return View();
         }
     }
 }

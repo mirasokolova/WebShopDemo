@@ -5,10 +5,13 @@
 }
 
 <h1>Index</h1>
+@if((this.User.Identity.IsAuthenticated) && (this.User.IsInRole("Administrator")))
+ {
+   <p>
+    <a asp - action = "Create"> Create New </a >
+       </p>
+ }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <form asp-controller="Product" asp-action="Idex" method="get">
     <p>
         Brand:<input type="text" name="SearchStringBrandName" />
@@ -50,25 +53,27 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+
+@foreach (var item in Model)
+{
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.ProductName)
             </td>
             @*<td>
-                @Html.DisplayFor(modelItem => item.BrandId)
-            </td>*@
+            @Html.DisplayFor(modelItem => item.BrandId)
+        </td>*@
             <td>
                 @Html.DisplayFor(modelItem => item.BrandName)
             </td>
             @*<td>
-                @Html.DisplayFor(modelItem => item.CategoryId)
-            </td>*@
+            @Html.DisplayFor(modelItem => item.CategoryId)
+        </td>*@
             <td>
                 @Html.DisplayFor(modelItem => item.CategoryName)
             </td>
             <td>
-                <img scr="@Html.DisplayFor(modelItem=> item.Picture)" alt="Image" width="100"/>
+                <img scr="@Html.DisplayFor(modelItem=> item.Picture)" alt="Image" width="100" />
                 @*@Html.DisplayFor(modelItem => item.Picture)*@
             </td>
             <td>
@@ -81,12 +86,28 @@
                 @Html.DisplayFor(modelItem => item.Discount)
             </td>
             <td>
+            @if ((this.User.Identity.IsAuthenticated) && (this.User.IsInRole("Administrator")))
+            {
+
+                <a asp - action="Edit" asp-route-id="@item.Id"> Edit </a>
+
+            }
+            <a asp - action="Edit" asp-route-id="@item.Id"> Details </a>
+            @if ((this.User.Identity.IsAuthenticated) && (this.User.IsInRole("Administrator")))
+            {
+
+                <a asp - action="Delete" asp-route-id="@item.Id"> Delete </a>
+
+            }
+            </td>
+            <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
 }
+
     </tbody>
 </table>
 @section Scripts{
