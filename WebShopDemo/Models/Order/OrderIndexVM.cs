@@ -15,13 +15,11 @@ namespace WebShopDemo.Models.Order
         public string UserId { get; set; }
         public string User { get; set; }
         [Required]
-        public string ProductId { get; set; }
-        public string ProductName { get; set; }
-
+        public int ProductId { get; set; }
+        public string Product { get; set; }
+       
         public string Picture { get; set; }
-        [Required]
-        [Range(1, int.MaxValue)]
-        [Display(Name = "Quantity")]
+        
         public int Quantity { get; set; }
 
         public decimal Price { get; set; }

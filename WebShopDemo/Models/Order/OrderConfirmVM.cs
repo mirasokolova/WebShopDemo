@@ -14,7 +14,7 @@ namespace WebShopDemo.Models.Order
         public string UserId { get; set; }
         public string User { get; set; }
         [Required]
-        public string ProductId { get; set; }
+        public int ProductId { get; set; }
         public string ProductName { get; set; }
     
         public string Picture { get; set; }
